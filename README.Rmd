@@ -1,16 +1,19 @@
-README
-================
+---
+title: "README"
+output: github_document
+---
 
-htmlreg\_convert
-================
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# htmlreg_convert
+A function that converts word doc created using the htmlreg function (from the great texreg package) into a xlsx or csv file. 
 
-A function that converts word doc created using the htmlreg function (from the great texreg package) into a xlsx or csv file.
-
-Here is an example of how to use the function.
+Here is an example of how to use the function. 
 
 First we implement a model - I have arbitrary chosen to run an `ergm` on Sampson dataset (that comes with the `ergm` package).
 
-``` r
+```{r ergm, eval=FALSE}
 library(xergm)
 
 data('sampson')
@@ -22,20 +25,20 @@ model <- ergm(samplike ~ edges + mutual + nodematch('group') +
 
 We then create a .doc file using the `htmlreg` function, that is part of the `texreg` package.
 
-``` r
+```{r htmlreg, eval=FALSE}
 library(texreg)
 htmlreg(model,file="ERGM_EXAMPLE_MODEL.doc",
         custom.model.names ="ERGM example",
         digits=5,bold=TRUE)
 ```
 
-We then manually save the .doc file as a .docx so that we can use the function to convert it to a xlsx/csv file.
+We then manually save the .doc file as a .docx so that we can use the function to convert it to a xlsx/csv file. 
 
 *If there is a way to omit this step, or to convert the htmlreg output to a .docx file in R - please let me know (in issues)*
 
-Once we have the docx file, we can then convert it to a xlsx/csv file. This function assume there is only one table in the docx file.
+Once we have the docx file, we can then convert it to a xlsx/csv file. This function assume there is only one table in the docx file. 
 
-``` r
+```{r html_convert, eval=FALSE}
 library(docxtractr)
 library(openxlsx)
 
@@ -47,4 +50,6 @@ htmlreg_convert("ERGM_EXAMPLE_MODEL.doc","xlsx")
 
 #convert to csv file
 htmlreg_convert("ERGM_EXAMPLE_MODEL.doc", "csv")
+
 ```
+
