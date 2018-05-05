@@ -53,3 +53,73 @@ htmlreg_convert("ERGM_EXAMPLE_MODEL.doc", "csv")
 
 ```
 
+The alternative is not to use the `texreg` package - rather use the `broom` package to convert model summary to a data frame, then to write his data frame to a csv. 
+
+```{r, broom, eval=FALSE}
+library(broom)
+
+modelDF<-tidy(model)
+
+write.csv(modelDF,"modelDF.csv")
+
+##Alternatively can write to xlsx
+library(openxlsx)
+
+write.xlsx(modelDF,"modelDF.xlsx")
+```
+
+We can also add the significant level stars (*) using the following:
+```{r brromstar, eval=FALSE}
+modelDF<-tidy(model)
+
+modelDF<-ITNr::round_df(modelDF,4) #round value to 4 decimal places
+
+LEN<-as.numeric(length(modelDF$p.value)) #Number of terms
+
+for (i in 1:LEN
+     ){
+  PV<-modelDF$p.value[[i]]
+  if(PV<0.001){
+    modelDF$star[[i]]<-"***"
+    } else if(0.001<=PV & PV<0.01){
+      modelDF$star[[i]]<-"**"
+    }else if(0.01<=PV & PV<0.05){
+      modelDF$star[[i]]<-"*"
+    } else modelDF$star[[i]]<-" "
+}
+
+head(modelDF)
+```
+
+```{r boromstar, eval=TRUE, echo = FALSE,message=FALSE}
+library(xergm)
+library(ITNr)
+library(broom)
+
+data('sampson')
+
+model <- ergm(samplike ~ edges + mutual + nodematch('group') + 
+            gwesp(decay = .5, fixed = TRUE) + 
+            gwidegree(decay = 1, fixed = TRUE))
+
+modelDF<-tidy(model)
+
+modelDF<-ITNr::round_df(modelDF,4)
+
+LEN<-as.numeric(length(modelDF$p.value))
+
+for (i in 1:LEN
+     ){
+  PV<-modelDF$p.value[[i]]
+  if(PV<0.001){
+    modelDF$star[[i]]<-"***"
+    } else if(0.001<=PV & PV<0.01){
+      modelDF$star[[i]]<-"**"
+    }else if(0.01<=PV & PV<0.05){
+      modelDF$star[[i]]<-"*"
+    } else modelDF$star[[i]]<-" "
+}
+
+head(modelDF)
+```
+
